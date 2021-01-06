@@ -1,0 +1,10 @@
+{
+  "id": "obsidian-metamatter",
+  "name": "Metamatter",
+  "author": "avirut",
+  "version": "0.10.6",
+  "minAppVersion": "0.10.5",
+  "description": "Combine templates with YAML front matter for more powerful note exploration.",
+  "authorURL": "https://avirut.me/",
+  "isDesktopOnly": "false"
+}
