@@ -1,4 +1,5 @@
-import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { App, Plugin, PluginSettingTab, Setting, TFile } from 'obsidian';
+import 'fs';
 
 interface MetamatterSettings {
 	templateFolder: string;
@@ -10,6 +11,7 @@ const DEFAULT_SETTINGS: MetamatterSettings = {
 
 export default class Metamatter extends Plugin {
 	settings: MetamatterSettings;
+	templates: Array<TFile>;
 
 	async onload() {
 		console.log('loading metamatter');
@@ -17,11 +19,10 @@ export default class Metamatter extends Plugin {
 		await this.loadSettings();
 
 		this.addCommand({
-			id: 'refresh-templates',
-			name: 'Refresh Templates',
+			id: 'reload-templates',
+			name: 'Reload Templates',
 			callback: () => {
-				let files = this.app.vault.getMarkdownFiles();
-				console.log(files);
+				this.reloadTemplates();
 			}
 			// checkCallback: (checking: boolean) => {
 			// 	let leaf = this.app.workspace.activeLeaf;
@@ -46,6 +47,21 @@ export default class Metamatter extends Plugin {
 		// });
 
 		//this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
+	}
+
+	reloadTemplates() {
+		let files = this.app.vault.getMarkdownFiles();
+
+		this.templates = [];
+
+		for (var file of files) {
+			if (file.path.indexOf(this.settings.templateFolder) == 0) {
+				console.log('inside')
+				this.templates.push(file);
+			}
+		}
+
+		console.log(this.templates);
 	}
 
 	onunload() {
@@ -81,7 +97,7 @@ class MetamatterSettingTab extends PluginSettingTab {
 			.setDesc('Files in this folder will be available as templates.')
 			.addText(text => text
 				.setPlaceholder('Example: folder1/folder2')
-				.setValue('')
+				.setValue('templates')
 				.onChange(async (value: string) => {
 					this.plugin.settings.templateFolder = value;
 					await this.plugin.saveSettings();
