@@ -20,6 +20,6 @@ export class TemplateSuggestModal extends FuzzySuggestModal<TFile> {
   }
 
   onChooseItem(item: TFile) {
-    console.log(item);
+    this.plugin.insertTemplate(item);
   }
 }
