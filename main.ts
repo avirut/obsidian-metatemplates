@@ -2,6 +2,8 @@ import { Plugin, TFile, MarkdownView, FrontMatterCache, MetadataCache, parseFron
 import { TemplateSuggestModal } from 'modals';
 import { MetamatterSettings, MetamatterSettingTab, DEFAULT_SETTINGS } from './mmsettings'
 
+import * as jsyaml from './js-yaml';
+
 export default class Metamatter extends Plugin {
 	settings: MetamatterSettings;
 	templates: Array<TFile>;
@@ -118,8 +120,32 @@ export default class Metamatter extends Plugin {
 	}
 
 	async fillTemplate(content: string) {
-		console.log(content);
-		return content;
+		let fmraw = content.substring(content.indexOf('---')+4, content.lastIndexOf('---')-1);
+		let fmparsed = jsyaml.load(fmraw);
+		console.log(fmparsed);
+
+		if (fmparsed['addCreated']) {
+			delete fmparsed['addCreated'];
+
+			let now = new Date();
+			let ye = new Intl.DateTimeFormat('en', { year: '2-digit' }).format(now);
+			let mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(now);
+			let da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(now);
+			let hr = new Intl.DateTimeFormat('en', { hour: '2-digit', hour12: false }).format(now);
+			let mn = new Intl.DateTimeFormat('en', { minute: '2-digit'}).format(now);
+
+			let dfstring = ye + mo + da + '@' + hr + mn;
+
+			fmparsed['created'] = dfstring;
+		}
+
+		if (fmparsed['nameFormat']) {
+			delete fmparsed['nameFormat'];
+		}
+
+		let ans = '---\n' + jsyaml.dump(fmparsed) + content.substring(content.lastIndexOf('---'));
+
+		return ans;
 	}
 
 	onunload() {
