@@ -36,12 +36,20 @@ export default class Metamatter extends Plugin {
 		});
 
 		this.app.metadataCache.on('changed', (file: TFile) => {
+			if (file.path.indexOf(this.settings.templateFolder) == 0) {
+				return;
+			}
+
 			let fm = this.app.metadataCache.getFileCache(file)?.frontmatter;
 			let fnf = this.type2titles.get(parseFrontMatterEntry(fm, 'type'));
 
 			let newfn = this.fnf2fn(fm, fnf);
+
 			if (newfn) {
-				this.app.fileManager.renameFile(file, newfn + '.md');
+				let newpath = file.path.substring(0, file.path.lastIndexOf('/')) + '/' + newfn + '.md';
+				if (newpath != file.path) {
+						this.app.fileManager.renameFile(file, newpath);
+				}
 			}
 		});
 
@@ -88,6 +96,7 @@ export default class Metamatter extends Plugin {
 			endInd = newfn.indexOf(">>");
 		}
 
+		newfn = newfn.replace(/[/\\?%*:|"<>]/g, '-');
 		return newfn;
 	}
 
