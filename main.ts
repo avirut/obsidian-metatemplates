@@ -25,7 +25,7 @@ export default class Metamatter extends Plugin {
 
 		this.addCommand({
 			id: 'insert-template',
-			name: 'Insert Template',
+			name: 'Insert template',
 			checkCallback: (checking: boolean) => {
 				let leaf = this.app.workspace.activeLeaf;
 				if (leaf) {
@@ -177,8 +177,11 @@ export default class Metamatter extends Plugin {
 		}
 
 		let dump = jsyaml.dump(fmparsed);
-		dump = dump.replace(/\:null/gi, "\:\"\"");
-		dump = dump.replace("\n  - ''", " ['']");
+
+		// have to typecast to <any> because TypeScript isn't updated for
+		// strings to have a replaceAll() method
+		dump = (<any>dump).replaceAll("null", "");
+		dump = (<any>dump).replaceAll("\n  - ''", " ['']");
 		let ans = '---\n' + dump + content.substring(content.lastIndexOf('---'));
 
 		return ans;
