@@ -2,7 +2,12 @@ import { Plugin, TFile, MarkdownView, FrontMatterCache, parseFrontMatterEntry } 
 import { TemplateSuggestModal } from 'modals';
 import { MetamatterSettings, MetamatterSettingTab, DEFAULT_SETTINGS } from './mmsettings'
 
+import type { Moment } from 'moment';
 import * as jsyaml from './js-yaml';
+
+declare global {
+    function moment(): Moment;
+}
 
 export default class Metamatter extends Plugin {
 	settings: MetamatterSettings;
@@ -113,17 +118,6 @@ export default class Metamatter extends Plugin {
 		return newfn;
 	}
 
-	getDTstring(): string {
-		let now = new Date();
-		let ye = new Intl.DateTimeFormat('en', { year: '2-digit' }).format(now);
-		let mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(now);
-		let da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(now);
-		let hr = new Intl.DateTimeFormat('en', { hour: '2-digit', hour12: false }).format(now);
-		let mn = new Intl.DateTimeFormat('en', { hour: '2-digit', hour12: false, minute: '2-digit' }).format(now).substring(3);
-
-		return ye + mo + da + '@' + hr + mn;
-	}
-
 	async insertTemplate(templateFile: TFile) {
 		// mildly plagiarized from https://github.com/SilentVoid13/Templater/
 		let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
@@ -145,7 +139,7 @@ export default class Metamatter extends Plugin {
 		let fm = this.app.metadataCache.getFileCache(templateFile)?.frontmatter;
 		let destFolder = parseFrontMatterEntry(fm, 'destFolder');
 
-		let newPath = (destFolder || '') + '/' + this.getDTstring() + '.md';
+		let newPath = (destFolder || '') + '/' + moment().format('YYMMDD@HHmmss') + '.md';
 		let content = await this.app.vault.read(templateFile);
 		content = await this.fillTemplate(content);
 
@@ -155,8 +149,6 @@ export default class Metamatter extends Plugin {
 			if (leaf) {
 				leaf.openFile(file);
 				this.app.workspace.setActiveLeaf(leaf);
-
-				// this.insertTemplate(templateFile);
 			}
 		})
 	}
@@ -164,14 +156,6 @@ export default class Metamatter extends Plugin {
 	async fillTemplate(content: string) {
 		let fmraw = content.substring(content.indexOf('---')+4, content.lastIndexOf('---')-1);
 		let fmparsed = jsyaml.load(fmraw);
-
-		if (fmparsed['addCreated']) {
-			delete fmparsed['addCreated'];
-
-			let dtstring = this.getDTstring();
-
-			fmparsed['created'] = dtstring;
-		}
 
 		if (fmparsed['nameFormat']) {
 			delete fmparsed['nameFormat'];
@@ -186,6 +170,9 @@ export default class Metamatter extends Plugin {
 		// strings to have a replaceAll() method
 		dump = (<any>dump).replaceAll("null", "");
 		dump = (<any>dump).replaceAll("\n  - ''", " ['']");
+		dump = (<any>dump).replaceAll("<<date>>", moment().format(this.settings.dateFormat));
+		dump = (<any>dump).replaceAll("<<time>>", moment().format(this.settings.timeFormat));
+
 		let ans = '---\n' + dump + content.substring(content.lastIndexOf('---'));
 
 		return ans;
