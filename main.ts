@@ -1,4 +1,4 @@
-import { Plugin, TFile, MarkdownView, FrontMatterCache, FileSystemAdapter, parseFrontMatterEntry } from 'obsidian';
+import { Plugin, TFile, MarkdownView, FrontMatterCache, parseFrontMatterEntry } from 'obsidian';
 import { TemplateSuggestModal } from 'modals';
 import { MetamatterSettings, MetamatterSettingTab, DEFAULT_SETTINGS } from './mmsettings'
 
@@ -13,6 +13,7 @@ export default class Metamatter extends Plugin {
 		console.log('loading metamatter');
 
 		await this.loadSettings();
+		this.addSettingTab(new MetamatterSettingTab(this.app, this));
 
 		this.addCommand({
 			id: 'reload-templates',
@@ -78,19 +79,14 @@ export default class Metamatter extends Plugin {
 				let newpath = file.path.substring(0, file.path.lastIndexOf('/')) + '/' + newfn + '.md';
 				if (newpath && newpath != file.path) {
 					this.app.fileManager.renameFile(file, newpath);
-					// (new FileSystemAdapter).exists(newpath).then((res: boolean) => {
-					// 	if (!res) {
-					// 		this.app.fileManager.renameFile(file, newpath);
-					// 	}
-					// })
 				}
 			}
 		});
 
+		this.app.workspace.on('layout-ready', () => {
+			this.reloadTemplates();
+		})
 
-		this.addSettingTab(new MetamatterSettingTab(this.app, this));
-
-		this.reloadTemplates();
 	}
 
 	reloadTemplates() {
