@@ -4,11 +4,13 @@ import Metamatter from './main';
 export class TemplateSuggestModal extends FuzzySuggestModal<TFile> {
   app: App;
   plugin: Metamatter;
+  creating: boolean;
 
-  constructor(app: App, plugin: Metamatter) {
+  constructor(app: App, plugin: Metamatter, creating: boolean) {
     super(app);
     this.app = app;
     this.plugin = plugin;
+    this.creating = creating;
   }
 
   getItems(): TFile[] {
@@ -20,6 +22,10 @@ export class TemplateSuggestModal extends FuzzySuggestModal<TFile> {
   }
 
   onChooseItem(item: TFile) {
-    this.plugin.insertTemplate(item);
+    if (this.creating) {
+      this.plugin.createNoteFromTemplate(item);
+    } else {
+      this.plugin.insertTemplate(item);
+    }
   }
 }

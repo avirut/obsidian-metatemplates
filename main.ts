@@ -30,7 +30,7 @@ export default class Metamatter extends Plugin {
 				let leaf = this.app.workspace.activeLeaf;
 				if (leaf) {
 					if (!checking) {
-						new TemplateSuggestModal(this.app, this).open();
+						new TemplateSuggestModal(this.app, this, false).open();
 					}
 					return true;
 				}
@@ -41,27 +41,8 @@ export default class Metamatter extends Plugin {
 		this.addCommand({
 			id: 'create-with-template',
 			name: 'Create with template',
-			checkCallback: (checking: boolean) => {
-
-
-				if (!checking) {
-					let newfile =  this.app.vault.create(this.getDTstring() + '.md', '');
-					newfile.then((file) => {
-						let leaf = this.app.workspace.activeLeaf;
-						if (leaf) {
-							leaf.openFile(file);
-						}
-					})
-				}
-
-				let leaf = this.app.workspace.activeLeaf;
-				if (leaf) {
-					if (!checking) {
-						new TemplateSuggestModal(this.app, this).open();
-					}
-					return true;
-				}
-				return false;
+			callback: () => {
+				new TemplateSuggestModal(this.app, this, true).open();
 			}
 		});
 
@@ -105,7 +86,7 @@ export default class Metamatter extends Plugin {
 			}
 		}
 
-		console.log("metamatter: loaded " + this.type2titles.size + " templates!")
+		console.log("metamatter: loaded " + (this.type2titles?.size || 'err: nomap') + " templates!")
 	}
 
 	fnf2fn(fm: FrontMatterCache, fnf: string): string {
@@ -160,6 +141,26 @@ export default class Metamatter extends Plugin {
     editor.focus();
 	}
 
+	async createNoteFromTemplate(templateFile: TFile) {
+		let fm = this.app.metadataCache.getFileCache(templateFile)?.frontmatter;
+		let destFolder = parseFrontMatterEntry(fm, 'destFolder');
+
+		let newPath = (destFolder || '') + '/' + this.getDTstring() + '.md';
+		let content = await this.app.vault.read(templateFile);
+		content = await this.fillTemplate(content);
+
+		let newfile =  this.app.vault.create(newPath, content);
+		newfile.then((file) => {
+			let leaf = this.app.workspace.activeLeaf;
+			if (leaf) {
+				leaf.openFile(file);
+				this.app.workspace.setActiveLeaf(leaf);
+
+				// this.insertTemplate(templateFile);
+			}
+		})
+	}
+
 	async fillTemplate(content: string) {
 		let fmraw = content.substring(content.indexOf('---')+4, content.lastIndexOf('---')-1);
 		let fmparsed = jsyaml.load(fmraw);
@@ -174,6 +175,9 @@ export default class Metamatter extends Plugin {
 
 		if (fmparsed['nameFormat']) {
 			delete fmparsed['nameFormat'];
+		}
+		if (fmparsed['destFolder']) {
+			delete fmparsed['destFolder'];
 		}
 
 		let dump = jsyaml.dump(fmparsed);
