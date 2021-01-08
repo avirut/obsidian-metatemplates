@@ -2,7 +2,7 @@ import { PluginSettingTab, App, Setting } from 'obsidian';
 import Metamatter from './main'
 
 export const DEFAULT_SETTINGS: MetamatterSettings = {
-	templateFolder: '/templates'
+	templateFolder: 'templates'
 }
 
 export interface MetamatterSettings {

@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "outDir": "C:/Users/avirut/OneDrive/Notes/.obsidian/plugins/obsidian-metamatter",
     "inlineSourceMap": true,
     "inlineSources": true,
     "module": "ESNext",
@@ -18,6 +19,6 @@
     ]
   },
   "include": [
-    "**/*.ts"
+    "**/*.ts",
   ]
 }
