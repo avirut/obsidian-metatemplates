@@ -4,7 +4,7 @@
   "author": "avirut",
   "version": "0.10.6",
   "minAppVersion": "0.10.6",
-  "description": "Combine templates with YAML front matter for more powerful note exploration.",
+  "description": "Generate notes from templates using YAML front-matter",
   "authorURL": "https://avirut.me/",
   "isDesktopOnly": "false"
 }
