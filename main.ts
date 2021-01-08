@@ -1,4 +1,4 @@
-import { Plugin, TFile, MarkdownView, FrontMatterCache, MetadataCache, parseFrontMatterEntry, getAllTags } from 'obsidian';
+import { Plugin, TFile, MarkdownView, FrontMatterCache, FileSystemAdapter, parseFrontMatterEntry } from 'obsidian';
 import { TemplateSuggestModal } from 'modals';
 import { MetamatterSettings, MetamatterSettingTab, DEFAULT_SETTINGS } from './mmsettings'
 
@@ -16,7 +16,7 @@ export default class Metamatter extends Plugin {
 
 		this.addCommand({
 			id: 'reload-templates',
-			name: 'Reload Templates',
+			name: 'Reload templates',
 			callback: () => {
 				this.reloadTemplates();
 			}
@@ -26,6 +26,33 @@ export default class Metamatter extends Plugin {
 			id: 'insert-template',
 			name: 'Insert Template',
 			checkCallback: (checking: boolean) => {
+				let leaf = this.app.workspace.activeLeaf;
+				if (leaf) {
+					if (!checking) {
+						new TemplateSuggestModal(this.app, this).open();
+					}
+					return true;
+				}
+				return false;
+			}
+		});
+
+		this.addCommand({
+			id: 'create-with-template',
+			name: 'Create with template',
+			checkCallback: (checking: boolean) => {
+
+
+				if (!checking) {
+					let newfile =  this.app.vault.create(this.getDTstring() + '.md', '');
+					newfile.then((file) => {
+						let leaf = this.app.workspace.activeLeaf;
+						if (leaf) {
+							leaf.openFile(file);
+						}
+					})
+				}
+
 				let leaf = this.app.workspace.activeLeaf;
 				if (leaf) {
 					if (!checking) {
@@ -49,8 +76,13 @@ export default class Metamatter extends Plugin {
 
 			if (newfn) {
 				let newpath = file.path.substring(0, file.path.lastIndexOf('/')) + '/' + newfn + '.md';
-				if (newpath != file.path) {
-						this.app.fileManager.renameFile(file, newpath);
+				if (newpath && newpath != file.path) {
+					this.app.fileManager.renameFile(file, newpath);
+					// (new FileSystemAdapter).exists(newpath).then((res: boolean) => {
+					// 	if (!res) {
+					// 		this.app.fileManager.renameFile(file, newpath);
+					// 	}
+					// })
 				}
 			}
 		});
@@ -76,6 +108,8 @@ export default class Metamatter extends Plugin {
 				this.type2titles.set(type, nameFormat);
 			}
 		}
+
+		console.log("metamatter: loaded " + this.type2titles.size + " templates!")
 	}
 
 	fnf2fn(fm: FrontMatterCache, fnf: string): string {
@@ -102,6 +136,17 @@ export default class Metamatter extends Plugin {
 		return newfn;
 	}
 
+	getDTstring(): string {
+		let now = new Date();
+		let ye = new Intl.DateTimeFormat('en', { year: '2-digit' }).format(now);
+		let mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(now);
+		let da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(now);
+		let hr = new Intl.DateTimeFormat('en', { hour: '2-digit', hour12: false }).format(now);
+		let mn = new Intl.DateTimeFormat('en', { hour: '2-digit', hour12: false, minute: '2-digit' }).format(now).substring(3);
+
+		return ye + mo + da + '@' + hr + mn;
+	}
+
 	async insertTemplate(templateFile: TFile) {
 		// mildly plagiarized from https://github.com/SilentVoid13/Templater/
 		let active_view = this.app.workspace.getActiveViewOfType(MarkdownView);
@@ -122,28 +167,23 @@ export default class Metamatter extends Plugin {
 	async fillTemplate(content: string) {
 		let fmraw = content.substring(content.indexOf('---')+4, content.lastIndexOf('---')-1);
 		let fmparsed = jsyaml.load(fmraw);
-		console.log(fmparsed);
 
 		if (fmparsed['addCreated']) {
 			delete fmparsed['addCreated'];
 
-			let now = new Date();
-			let ye = new Intl.DateTimeFormat('en', { year: '2-digit' }).format(now);
-			let mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(now);
-			let da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(now);
-			let hr = new Intl.DateTimeFormat('en', { hour: '2-digit', hour12: false }).format(now);
-			let mn = new Intl.DateTimeFormat('en', { minute: '2-digit'}).format(now);
+			let dtstring = this.getDTstring();
 
-			let dfstring = ye + mo + da + '@' + hr + mn;
-
-			fmparsed['created'] = dfstring;
+			fmparsed['created'] = dtstring;
 		}
 
 		if (fmparsed['nameFormat']) {
 			delete fmparsed['nameFormat'];
 		}
 
-		let ans = '---\n' + jsyaml.dump(fmparsed) + content.substring(content.lastIndexOf('---'));
+		let dump = jsyaml.dump(fmparsed);
+		dump = dump.replace(/\:null/gi, "\:\"\"");
+		dump = dump.replace("\n  - ''", " ['']");
+		let ans = '---\n' + dump + content.substring(content.lastIndexOf('---'));
 
 		return ans;
 	}
