@@ -39,8 +39,8 @@ export default class Metamatter extends Plugin {
 		});
 
 		this.addCommand({
-			id: 'create-with-template',
-			name: 'Create with template',
+			id: 'create-from-template',
+			name: 'Create from template',
 			callback: () => {
 				new TemplateSuggestModal(this.app, this, true).open();
 			}
