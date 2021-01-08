@@ -37,6 +37,7 @@ export class MetamatterSettingTab extends PluginSettingTab {
 				.onChange(async (value: string) => {
 					this.plugin.settings.templateFolder = value;
 					await this.plugin.saveSettings();
+					this.plugin.reloadTemplates();
 				}));
 
 		new Setting(containerEl)
