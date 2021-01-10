@@ -19,3 +19,6 @@ The dynamically filled upon note insertion/creation values `{{date}}` and `{{tim
 
 ## Sample Output
 ![sample output](https://github.com/avirut/obsidian-metatemplates/blob/master/imgs/from-template.png?raw=true)
+
+## Credits
+Thanks to Liam and Licat in the Discord #plugins channel for their frequent help!
