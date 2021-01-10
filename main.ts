@@ -15,7 +15,7 @@ export default class Metatemplates extends Plugin {
 	type2titles: Map<string, string>;
 
 	async onload() {
-		console.log('loading etatemplates');
+		console.log('loading plugin: metatemplates');
 
 		await this.loadSettings();
 		this.addSettingTab(new MetatemplatesSettingTab(this.app, this));
@@ -179,7 +179,7 @@ export default class Metatemplates extends Plugin {
 	}
 
 	onunload() {
-		console.log('unloading metatemplates');
+		console.log('unloading plugin: metatemplates');
 	}
 
 	async loadSettings() {
