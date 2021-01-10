@@ -1,8 +1,8 @@
 {
-  "id": "obsidian-metamatter",
-  "name": "Metamatter",
+  "id": "obsidian-metatemplates",
+  "name": "Metatemplates",
   "author": "avirut",
-  "version": "0.10.6",
+  "version": "0.1.0",
   "minAppVersion": "0.10.6",
   "description": "Generate notes from templates using YAML front-matter",
   "authorURL": "https://avirut.me/",

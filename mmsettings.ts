@@ -1,22 +1,22 @@
 import { PluginSettingTab, App, Setting } from 'obsidian';
-import Metamatter from './main'
+import Metatemplates from './main'
 
-export const DEFAULT_SETTINGS: MetamatterSettings = {
+export const DEFAULT_SETTINGS: MetatemplatesSettings = {
 	templateFolder: 'templates',
 	dateFormat: 'YYMMDD',
 	timeFormat: 'HHmm'
 }
 
-export interface MetamatterSettings {
+export interface MetatemplatesSettings {
 	templateFolder: string;
 	dateFormat: string;
 	timeFormat: string;
 }
 
-export class MetamatterSettingTab extends PluginSettingTab {
-	plugin: Metamatter;
+export class MetatemplatesSettingTab extends PluginSettingTab {
+	plugin: Metatemplates;
 
-	constructor(app: App, plugin: Metamatter) {
+	constructor(app: App, plugin: Metatemplates) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
@@ -26,7 +26,7 @@ export class MetamatterSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		containerEl.createEl('h2', {text: 'Metamatter Settings'});
+		containerEl.createEl('h2', {text: 'Metatemplates Settings'});
 
 		new Setting(containerEl)
 			.setName('Template folder location')

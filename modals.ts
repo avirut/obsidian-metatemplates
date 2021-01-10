@@ -1,12 +1,12 @@
 import { App, FuzzySuggestModal, TFile } from 'obsidian';
-import Metamatter from './main';
+import Metatemplates from './main';
 
 export class TemplateSuggestModal extends FuzzySuggestModal<TFile> {
   app: App;
-  plugin: Metamatter;
+  plugin: Metatemplates;
   creating: boolean;
 
-  constructor(app: App, plugin: Metamatter, creating: boolean) {
+  constructor(app: App, plugin: Metatemplates, creating: boolean) {
     super(app);
     this.app = app;
     this.plugin = plugin;

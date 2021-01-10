@@ -1,6 +1,6 @@
 import { Plugin, TFile, MarkdownView, FrontMatterCache, parseFrontMatterEntry } from 'obsidian';
 import { TemplateSuggestModal } from 'modals';
-import { MetamatterSettings, MetamatterSettingTab, DEFAULT_SETTINGS } from './mmsettings'
+import { MetatemplatesSettings, MetatemplatesSettingTab, DEFAULT_SETTINGS } from './mmsettings'
 
 import type { Moment } from 'moment';
 import * as jsyaml from './js-yaml';
@@ -9,16 +9,16 @@ declare global {
     function moment(): Moment;
 }
 
-export default class Metamatter extends Plugin {
-	settings: MetamatterSettings;
+export default class Metatemplates extends Plugin {
+	settings: MetatemplatesSettings;
 	templates: Array<TFile>;
 	type2titles: Map<string, string>;
 
 	async onload() {
-		console.log('loading metamatter');
+		console.log('loading etatemplates');
 
 		await this.loadSettings();
-		this.addSettingTab(new MetamatterSettingTab(this.app, this));
+		this.addSettingTab(new MetatemplatesSettingTab(this.app, this));
 
 		this.addCommand({
 			id: 'reload-templates',
@@ -91,7 +91,7 @@ export default class Metamatter extends Plugin {
 			}
 		}
 
-		console.log("metamatter: loaded " + (this.type2titles?.size || 'err: nomap') + " templates!")
+		console.log("metatemplates: loaded " + (this.type2titles?.size || 'err: nomap') + " templates!")
 	}
 
 	fnf2fn(fm: FrontMatterCache, fnf: string): string {
@@ -179,7 +179,7 @@ export default class Metamatter extends Plugin {
 	}
 
 	onunload() {
-		console.log('unloading metamatter');
+		console.log('unloading metatemplates');
 	}
 
 	async loadSettings() {

@@ -1,24 +1,22 @@
 {
-  "name": "obsidian-metamatter",
-  "version": "0.10.6",
-  "description": "add functionality to YAML metadata in obsidian.md",
+  "name": "obsidian-metatemplates",
+  "version": "0.1.0",
+  "description": "Take advantage of YAML front-matter in generating notes from templates",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/avirut/obsidian-metamatter.git"
+    "url": "git+https://github.com/avirut/obsidian-metatemplates.git"
   },
   "author": "avirut",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/avirut/obsidian-metamatter/issues"
+    "url": "https://github.com/avirut/obsidian-metatemplates/issues"
   },
-  "homepage": "https://github.com/avirut/obsidian-metamatter#readme",
-  "dependencies": {
-    "gray-matter": "^4.0.2"
-  },
+  "homepage": "https://github.com/avirut/obsidian-metatemplates#readme",
+  "dependencies": {},
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.0.1",

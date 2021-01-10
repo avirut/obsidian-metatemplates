@@ -1,2 +1,2 @@
-# obsidian-metamatter
-Generate notes from templates using YAML front-matter (for obsidian.md)
+# obsidian-metatemplates
+Take advantage of YAML front-matter in generating notes from templates
