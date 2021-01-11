@@ -14,6 +14,7 @@ export class TemplateSuggestModal extends FuzzySuggestModal<TFile> {
   }
 
   getItems(): TFile[] {
+    this.plugin.reloadTemplates();
     return this.plugin.templates;
   }
 

@@ -52,7 +52,7 @@ export default class Metatemplates extends Plugin {
     });
 
     this.app.metadataCache.on('changed', (file: TFile) => {
-      if (file.path.indexOf(this.settings.templateFolder) == 0) {
+      if (file.path.indexOf(this.settings.templateFolder) === 0) {
         return;
       }
 
@@ -82,7 +82,7 @@ export default class Metatemplates extends Plugin {
     this.type2titles = new Map();
 
     for (var file of files) {
-      if (file.path.indexOf(this.settings.templateFolder) == 0) {
+      if (file.path.indexOf(this.settings.templateFolder) === 0) {
         this.templates.push(file);
         let fm = this.app.metadataCache.getFileCache(file)?.frontmatter;
         let type = parseFrontMatterEntry(fm, 'type');
@@ -154,7 +154,9 @@ export default class Metatemplates extends Plugin {
   }
 
   async fillTemplate(content: string) {
-    let fmraw = content.substring(content.indexOf('---') + 4, content.lastIndexOf('---') - 1);
+    let startInd = content.indexOf('---') + 4;
+    let endInd = content.substring(startInd).indexOf('---') - 1;
+    let fmraw = content.substring(startInd, endInd);
     let fmparsed = jsyaml.load(fmraw);
 
     if (fmparsed['nameFormat']) {
