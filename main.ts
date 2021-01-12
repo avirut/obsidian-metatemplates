@@ -90,8 +90,6 @@ export default class Metatemplates extends Plugin {
         this.type2titles.set(type, nameFormat);
       }
     }
-
-    console.log("metatemplates: loaded " + (this.type2titles?.size || 'err: nomap') + " templates!")
   }
 
   fnf2fn(fm: FrontMatterCache, fnf: string): string {
