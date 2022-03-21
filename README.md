@@ -11,7 +11,7 @@ This plugin is more or less intended to be used as a replacement for the core `t
 ## Usage
 First, refer to plugin settings and specify a template folder location as well as desired date and time formats.
 
-Each template is distinguished by it's `type` property in the frontmatter. You then can additionally specify a `nameFormat` property and a `destFolder` property. The `nameFormat` property will be used to dynamically rename other notes elsewhere in your Obsidian vault (but outside of the templates folder) that are of the same `type`. That is, any template with a `nameFormat` specified will apply to other notes that were generated using that template. The `nameFormat` property draws from the other frontmatter attributes for each file, and updates automatically when there are changes to the frontmatter.
+Each template is distinguished by its `type` property in the frontmatter. You then can additionally specify a `nameFormat` property and a `destFolder` property. The `nameFormat` property will be used to dynamically rename other notes elsewhere in your Obsidian vault (but outside of the templates folder) that are of the same `type`. That is, any template with a `nameFormat` specified will apply to other notes that were generated using that template. The `nameFormat` property draws from the other frontmatter attributes for each file, and updates automatically when there are changes to the frontmatter.
 
 The `destFolder` property is used along with the `metatemplates: Create  from template` command (available in the command pallette and assignable to a hotkey via settings). When this property is specified, any notes created from that template will be automatically placed in the specified location (relative path to vault root). 
 
